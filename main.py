@@ -1,16 +1,16 @@
-# Импорт библиотек
-import function as fn
+import pickle
+import pandas as pd
 
-# Загрузка данных
-df = fn.loading_data('data/input/data_fusion_train.parquet')
-train, test = fn.separation_data(df)
+def main(df):
+    tfidf = pickle.load(open('tfidf', 'rb'))
+    clf = pickle.load(open('clf_task1', 'rb'))
 
-# Обработка данных
+    X_test = tfidf.transform(df.item_name)
 
-# Постороение модели
+    pred = clf.predict(X_test)
 
-# Обучение модели
+    res = pd.DataFrame(pred, columns=['pred'])
+    res['id'] = df['id']
 
-# Подготовка выходных данных
-
-# Формирование результата для отправки
+    res[['id', 'pred']].to_csv('answers.csv', index=None)
+    return res[['id', 'pred']]

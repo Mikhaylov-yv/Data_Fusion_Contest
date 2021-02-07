@@ -16,7 +16,8 @@ def separation_data(df):
 def add_ed_izm(df):
     reg_dict = {'gram': '\d{1,5}.{0,1}г',
                 'kg': '\d{1,5}.{0,1}кг',
-                'litr': '\d{1,3}[.|,]{0,1}\d{1,3}.{0,1}л'}
+                'litr': '\d{1,3}[.|,]{0,1}\d{1,3}.{0,1}л',
+                'mlitr' : '\d{1,4}.{0,2}мл'}
     df = df[['item_name']].drop_duplicates()
     df.item_name = df.item_name.str.lower()
     for typ in reg_dict.keys():
@@ -33,7 +34,7 @@ def add_ed_izm(df):
     df.col = df.col.str.replace('[^0-9,]', '', regex=True)
     df.col = pd.to_numeric(df.col)
     # # Концеритруем все в близкое к кг
-    for ed_izm in ['gram']:
+    for ed_izm in ['gram', 'mlitr']:
         df.loc[df.ed_izm == ed_izm, 'col'
                 ] = df.loc[df.ed_izm == ed_izm, 'col'] / 1000
     return df
