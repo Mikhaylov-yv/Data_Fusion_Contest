@@ -19,6 +19,7 @@ def test_loading_data():
     df = fn.loading_data('tests/test_data_fusion_train.parquet')
     is_pandas = type(df) is pd.core.frame.DataFrame
     print(is_pandas)
+    print(df.columns)
     assert is_pandas
 
 # def test_save_output_zip():
@@ -44,6 +45,4 @@ def test_add_ed_izm():
 
 
 def test_lern_main():
-    pikl_data = lern.main(pd.read_parquet('tests/test_data_fusion_train.parquet'))
-    print(len(pikl_data))
-    lern.seve_model(pikl_data[0], pikl_data[1])
+    lern.main(pd.read_parquet('tests/test_data_fusion_train.parquet'), test = True)
