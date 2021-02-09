@@ -1,11 +1,14 @@
 import pickle
 import pandas as pd
 
+import script_function as sfn
+
 def main(df):
     # Load model
     tfidf = pickle.load(open('tfidf', 'rb'))
     clf = pickle.load(open('clf_task1', 'rb'))
     # Edit data
+    df = sfn.data_preparation(df)
     X_test = tfidf.transform(df.item_name)
     # Predict
     pred = clf.predict(X_test)

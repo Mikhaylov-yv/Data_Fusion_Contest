@@ -1,4 +1,5 @@
 import function as fn
+import lern
 from main import main
 import pandas as pd
 import os
@@ -40,3 +41,9 @@ def test_add_ed_izm():
     test_df = fn.add_ed_izm(df)
     test_df['item_name_in'] = df.item_name
     print(test_df)
+
+
+def test_lern_main():
+    pikl_data = lern.main(pd.read_parquet('tests/test_data_fusion_train.parquet'))
+    print(len(pikl_data))
+    lern.seve_model(pikl_data[0], pikl_data[1])

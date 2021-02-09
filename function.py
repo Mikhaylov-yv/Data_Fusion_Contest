@@ -1,6 +1,11 @@
 import pandas as pd
 import shutil
 import os
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import cross_val_score
+from sklearn.feature_extraction.text import CountVectorizer
+from nltk.corpus import stopwords
+
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def loading_data(path):
@@ -38,6 +43,17 @@ def add_ed_izm(df):
         df.loc[df.ed_izm == ed_izm, 'col'
                 ] = df.loc[df.ed_izm == ed_izm, 'col'] / 1000
     return df
+
+def get_cv(text_ser):
+    stop = stopwords.words('russian')
+    cv = CountVectorizer(stop_words=stop, min_df=3)
+    return cv
+
+def get_model(X_train, y_train):
+    clf = LogisticRegression(max_iter=400)
+    cross_val_score(clf, X_train, y_train, cv=3, scoring='f1_weighted')
+    return clf
+
 
 
 # Сохранение готово к отправке zip архива
