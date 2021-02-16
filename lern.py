@@ -3,7 +3,7 @@ import script_function as sfn
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import pickle
-
+from scipy.sparse import csr_matrix
 
 def main(train, test = False):
     df = train[train.category_id != -1]
@@ -26,7 +26,7 @@ def main(train, test = False):
     # Состаления словаря для перевода векторы
     cv = fn.get_cv(train_item_name_ser)
     # Перевод слов векторы
-    cv_fit = cv.transform(train_item_name_ser)
+    cv_fit = csr_matrix(cv.transform(train_item_name_ser))
     # Постороение модели
     clf = fn.get_model(cv_fit, train_item_name_ser.index)
     # Обучение модели

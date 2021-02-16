@@ -1,18 +1,25 @@
 import function as fn
 from main import main
 import pandas as pd
+import time
 from pandas.testing import assert_series_equal
 import numpy as np
 import pickle
 import os
 from sklearn import metrics
 from datetime import datetime
+import lern
 pd.options.display.max_columns = None
 pd.options.display.expand_frame_repr = None
 
 os.chdir('../')
 
 def test_script_quality():
+    # Обучение
+    start_time = time.time()
+    lern.main(pd.read_parquet('data/input/data_fusion_train.parquet'))
+    lern_time = round((time.time() - start_time)/60, 2)
+    # Тест качества обучения
     X_test = pickle.load(open('X_test', 'rb'))
     X_test['id'] = X_test['receipt_id']
     y_test = pickle.load(open('y_test', 'rb'))
@@ -34,13 +41,15 @@ def test_script_quality():
     assert pred.shape[0] == df_out.index.shape[0]
     score = metrics.f1_score(df_out.category_id, df_out.pred, average='weighted')
     print(f"Точность ответов: {round(score * 100, 2)}%")
-    seve_data_to_report(score)
+    seve_data_to_report(score, lern_time)
 
-def seve_data_to_report(score, test = False):
+def seve_data_to_report(score,lern_time, test = False):
     encoding = '1251'
     path = 'reports/Результаты тестов модели.csv'
     df = pd.read_csv(path, encoding=encoding, sep= ';', index_col = 'Дата')
-    df.loc[pd.to_datetime(datetime.today().strftime('%d/%m/%Y %H:%M')), 'Результат'] = str(score).replace('.', ',')
+    time_index = pd.to_datetime(datetime.today().strftime('%d/%m/%Y %H:%M'))
+    df.loc[time_index, 'Результат'] = str(score).replace('.', ',')
+    df.loc[time_index, 'Время обучения'] = lern_time
     if ~test:
         df.to_csv(path, sep= ';', encoding=encoding)
     return df

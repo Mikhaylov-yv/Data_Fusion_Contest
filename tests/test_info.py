@@ -9,6 +9,7 @@ pd.options.display.max_rows = 300
 os.chdir('../')
 
 def test_count_words():
+    # Тестируем качество
     df = pd.read_parquet('tests/test_data_fusion_train.parquet')
     cv = fn.get_cv()
     cv.fit_transform(df.item_name)
