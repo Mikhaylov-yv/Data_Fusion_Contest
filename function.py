@@ -23,7 +23,7 @@ def add_ed_izm(df):
                 'kg': '\d{1,5}.{0,1}кг',
                 'litr': '\d{1,3}[.|,]{0,1}\d{1,3}.{0,1}л',
                 'mlitr' : '\d{1,4}.{0,2}мл'}
-    df = df[['item_name']].drop_duplicates()
+    df = df[['item_name']]#.drop_duplicates()
     df.item_name = df.item_name.str.lower()
     for typ in reg_dict.keys():
         ser_filtr = df.item_name.str.contains(reg_dict[typ], na=False)
@@ -44,9 +44,10 @@ def add_ed_izm(df):
                 ] = df.loc[df.ed_izm == ed_izm, 'col'] / 1000
     return df
 
-def get_cv(text_ser):
+def get_cv(train_item_name_ser):
     stop = stopwords.words('russian')
     cv = CountVectorizer(stop_words=stop, min_df=3)
+    cv.fit(train_item_name_ser)
     return cv
 
 def get_model(X_train, y_train):

@@ -14,7 +14,9 @@ def main(train, test = False):
         pickle.dump(X_test, open('X_test', 'wb'))
         pickle.dump(y_test, open('y_test', 'wb'))
     # Предварительная обработка текста
-    X_train = sfn.data_preparation(X_train)
+    # X_train = sfn.data_preparation(X_train)
+    # Выделение дополнительных данных
+    X_train = fn.add_ed_izm(X_train)
 
     # Выделение item_name с индексами category_id
     train_item_name_ser = X_train['item_name']
@@ -24,7 +26,7 @@ def main(train, test = False):
     # Состаления словаря для перевода векторы
     cv = fn.get_cv(train_item_name_ser)
     # Перевод слов векторы
-    cv_fit = cv.fit_transform(train_item_name_ser)
+    cv_fit = cv.transform(train_item_name_ser)
     # Постороение модели
     clf = fn.get_model(cv_fit, train_item_name_ser.index)
     # Обучение модели

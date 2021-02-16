@@ -1,5 +1,6 @@
 import pickle
 import pandas as pd
+import function as fn
 
 import script_function as sfn
 
@@ -8,7 +9,8 @@ def main(df, test = False):
     tfidf = pickle.load(open('tfidf', 'rb'))
     clf = pickle.load(open('clf_task1', 'rb'))
     # Edit data
-    df = sfn.data_preparation(df)
+    # df = sfn.data_preparation(df)
+    df = fn.add_ed_izm(df)
     X_test = tfidf.transform(df.item_name)
     # Predict
     pred = clf.predict(X_test)
