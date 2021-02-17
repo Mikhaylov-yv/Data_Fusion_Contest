@@ -46,7 +46,7 @@ def add_ed_izm(df):
 
 def get_cv(train_item_name_ser):
     stop = stopwords.words('russian')
-    cv = CountVectorizer(stop_words=stop, min_df=2)
+    cv = CountVectorizer(stop_words=stop, ngram_range = (1,2), min_df=2)
     cv.fit(train_item_name_ser)
     return cv
 

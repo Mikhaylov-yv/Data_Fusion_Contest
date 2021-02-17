@@ -36,6 +36,7 @@ def main(train, test = False):
     if ~test:
         pickle.dump(tfidf, open('tfidf', 'wb'))
         pickle.dump(clf, open('clf_task1', 'wb'))
+    return
 
 
 if __name__ == '__main__':

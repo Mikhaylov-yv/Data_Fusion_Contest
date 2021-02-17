@@ -53,7 +53,3 @@ def seve_data_to_report(score,lern_time, test = False):
     if ~test:
         df.to_csv(path, sep= ';', encoding=encoding)
     return df
-
-
-# def test_seve_data_to_report():
-#     print(seve_data_to_report(0.228, test = True))

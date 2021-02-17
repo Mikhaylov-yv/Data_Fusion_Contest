@@ -1,3 +1,4 @@
+import pytest
 import function as fn
 import lern
 from main import main
@@ -9,14 +10,19 @@ pd.options.display.expand_frame_repr = None
 os.chdir('../')
 
 # Проверка работоспособности основного отправляемого файла
-def test_main():
+
+@pytest.fixture()
+def df():
     df = pd.read_parquet('tests/test_data_fusion_train.parquet')
+    return df
+
+
+def test_main(df):
     df['id'] = df.receipt_id
     main(df)
 
 # Проверка функции загрузки данных
-def test_loading_data():
-    df = fn.loading_data('tests/test_data_fusion_train.parquet')
+def test_loading_data(df):
     is_pandas = type(df) is pd.core.frame.DataFrame
     print(is_pandas)
     print(df.columns)
@@ -43,6 +49,9 @@ def test_add_ed_izm():
     test_df['item_name_in'] = df.item_name
     print(test_df)
 
+def test_get_cv(df):
+    cv = fn.get_cv(df.item_name)
+    print(pd.Series(cv.vocabulary_).sort_values())
 
-def test_lern_main():
-    lern.main(pd.read_parquet('tests/test_data_fusion_train.parquet'), test = True)
+def test_lern_main(df):
+    lern.main(df, test = True)
