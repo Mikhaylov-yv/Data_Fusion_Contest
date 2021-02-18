@@ -17,20 +17,14 @@ def main(train, test = False):
     # X_train = sfn.data_preparation(X_train)
     # Выделение дополнительных данных
     X_train = fn.add_ed_izm(X_train)
-
-    # Выделение item_name с индексами category_id
-    train_item_name_ser = X_train['item_name']
-    train_item_name_ser.index = y_train
-    train_item_name_ser = train_item_name_ser.drop_duplicates()
-
     # Состаления словаря для перевода векторы
-    cv = fn.get_cv(train_item_name_ser)
+    cv = fn.get_cv(X_train['item_name'])
     # Перевод слов векторы
-    cv_fit = csr_matrix(cv.transform(train_item_name_ser))
+    cv_fit = csr_matrix(cv.transform(X_train['item_name']))
     # Постороение модели
-    clf = fn.get_model(cv_fit, train_item_name_ser.index)
+    clf = fn.get_model(cv_fit, X_train['item_name'])
     # Обучение модели
-    clf.fit(cv_fit, train_item_name_ser.index)
+    clf.fit(cv_fit, y_train)
     # Сохранение моделей
     tfidf = cv
     if ~test:

@@ -42,6 +42,7 @@ def add_ed_izm(df):
     for ed_izm in ['gram', 'mlitr']:
         df.loc[df.ed_izm == ed_izm, 'col'
                 ] = df.loc[df.ed_izm == ed_izm, 'col'] / 1000
+    df.item_name = df.item_name + ' ' + df.ed_izm.fillna('')
     return df
 
 def get_cv(train_item_name_ser):

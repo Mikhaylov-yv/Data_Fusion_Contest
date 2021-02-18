@@ -16,7 +16,6 @@ def df():
     df = pd.read_parquet('tests/test_data_fusion_train.parquet')
     return df
 
-
 def test_main(df):
     df['id'] = df.receipt_id
     main(df)
@@ -51,6 +50,7 @@ def test_add_ed_izm():
 
 def test_get_cv(df):
     cv = fn.get_cv(df.item_name)
+    print(cv)
     print(pd.Series(cv.vocabulary_).sort_values())
 
 def test_lern_main(df):
