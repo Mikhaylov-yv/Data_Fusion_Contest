@@ -7,6 +7,7 @@ from scipy.sparse import csr_matrix
 
 def main(train, test = False):
     df = train[train.category_id != -1]
+    df = df.drop_duplicates(subset=['item_name'])
     X_train, X_test, y_train, y_test = train_test_split(
         df.drop('category_id', 1), df.category_id, test_size=0.2, random_state=42)
     # Сохранение тестовых данных
@@ -22,7 +23,7 @@ def main(train, test = False):
     # Перевод слов векторы
     cv_fit = csr_matrix(cv.transform(X_train['item_name']))
     # Постороение модели
-    clf = fn.get_model(cv_fit, X_train['item_name'])
+    clf = fn.get_model(cv_fit, y_train)
     # Обучение модели
     clf.fit(cv_fit, y_train)
     # Сохранение моделей
