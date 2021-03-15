@@ -21,17 +21,17 @@ def main(train, test = False):
     # Состаления словаря для перевода векторы
     cv = fn.get_cv(X_train['item_name'])
     # Перевод слов векторы
-    cv_fit = csr_matrix(cv.transform(X_train['item_name']))
+
+    X_train = csr_matrix(cv.transform(X_train['item_name']))
     # Постороение модели
-    clf = fn.get_model(cv_fit, y_train)
+    clf = fn.get_model(X_train, y_train)
     # Обучение модели
-    clf.fit(cv_fit, y_train)
+    clf.fit(X_train, y_train)
     # Сохранение моделей
     tfidf = cv
     if ~test:
         pickle.dump(tfidf, open('tfidf', 'wb'))
         pickle.dump(clf, open('clf_task1', 'wb'))
-    return
 
 
 if __name__ == '__main__':

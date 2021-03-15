@@ -24,3 +24,7 @@ def test_count_words():
 После обработки: {count_out} слов""")
     print(df_transform)
     print(pd.Series(cv.vocabulary_).sort_values(ascending=False))
+
+def test_hand_data():
+    df = pd.read_excel(r'C:\Users\Женечка\Desktop\Ручная разметка данных\Не размеченные данные.xlsx')
+    print(df)
