@@ -8,9 +8,20 @@ from nltk.corpus import stopwords
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-def loading_data(path):
-    df = pd.read_parquet(path)
-    return df
+def loading_data(path, cat_dict = {}):
+    df = pd.read_parquet(path)[[
+        'category_id', 'item_name']]
+    #     df = df[~df.category_id.isin([0, 133, 3, 177, 43, 18, 120, 45, 2, 49, 66, 30, 118, 7])]
+    if cat_dict == {}:
+        cat_num = 0
+        for category_id in df.category_id.drop_duplicates():
+            cat_dict[category_id] = cat_num
+            df.loc[df.category_id == category_id, 'category_id_new'] = cat_num
+            cat_num += 1
+        return df, cat_dict
+    else:
+        df['category_id_new'] = df.category_id.map(cat_dict)
+        return df
 
 # Разделение на тренировочные и тестовые данные
 def separation_data(df):

@@ -8,13 +8,13 @@ pd.options.display.max_columns = None
 pd.options.display.expand_frame_repr = None
 
 os.chdir('../')
-
+path = 'tests/test_data_fusion_train.parquet'
 # Проверка работоспособности основного отправляемого файла
 
 @pytest.fixture()
 def df():
-    df = pd.read_parquet('tests/test_data_fusion_train.parquet')
-    return df
+    df_, cat_dict = fn.loading_data(path)
+    return df_
 
 def test_main(df):
     df['id'] = df.receipt_id
@@ -53,5 +53,5 @@ def test_get_cv(df):
     print(cv)
     print(pd.Series(cv.vocabulary_).sort_values())
 
-def test_lern_main(df):
-    lern.main(df, test = True)
+def test_lern_main():
+    lern.main(path, test = True)
