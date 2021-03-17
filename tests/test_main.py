@@ -17,8 +17,11 @@ def df():
     return df_
 
 def test_main(df):
-    # df['id'] = df.receipt_id
-    print(main(df))
+    predict = main(df)
+    df['predict'] = predict
+    print(df)
+
+
 
 # Проверка функции загрузки данных
 def test_loading_data(df):

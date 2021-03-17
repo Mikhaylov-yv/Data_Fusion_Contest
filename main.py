@@ -12,7 +12,8 @@ def main(df, test = False):
     # df = sfn.data_preparation(df)
     # df = fn.add_ed_izm(df)
     # Predict
-    pred = df.item_name.apply(predict).map(dict(map(reversed, cat_dict.items())))
+    # pred = df.item_name.apply(predict).map(dict(map(reversed, cat_dict.items())))
+    pred = predict(df.item_name)
 
     # generation report
     if ~test:
@@ -24,17 +25,25 @@ def main(df, test = False):
 
         res[['id', 'pred']].to_csv('answers.csv', index=None)
 
-def predict(text):
+def predict(text_list):
     with torch.no_grad():
+        text_list = text_list.values
+        # print(text_list)
         tokenizer = pickle.load(open('tokenizer', 'rb'))
         vocab = pickle.load(open('vocab', 'rb'))
+        cat_dict = pickle.load(open('cat_dict', 'rb'))
         text_pipeline = lambda x: [vocab[token] for token in tokenizer(x)]
         device = torch.device('cpu')
         model_param = pickle.load(open('model_param', 'rb'))
         model = TextClassificationModel(model_param['vocab_size'],
                                         model_param['embed_dim'],
                                         model_param['num_class'])
+        print('+' * 50)
         model.load_state_dict(torch.load('model', map_location=device))
-        text = torch.tensor(text_pipeline(text))
-        output = model(text, torch.tensor([0]))
-        return output.argmax(1).item()
+        output = []
+        for text in text_list:
+            text = torch.tensor(text_pipeline(text))
+            pred = model(text, torch.tensor([0])).argmax(1).item()
+            pred = dict(map(reversed, cat_dict.items()))[pred]
+            output.append(pred)
+        return output

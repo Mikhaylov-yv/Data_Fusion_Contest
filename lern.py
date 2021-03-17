@@ -12,6 +12,7 @@ import time
 def main(path, test = False):
     # Загрузка данных
     train_df, cat_dict = fn.loading_data(path)
+    train_df = train_df[train_df.category_id != -1].drop_duplicates(subset=['item_name', 'category_id'])
     train_data = train_df[['category_id_new', 'item_name']].to_numpy()
 
     tokenizer = get_tokenizer('basic_english')
@@ -126,8 +127,8 @@ def main(path, test = False):
 
 
     # Сохранение моделей
-    if test:
-        print('Режим тестирования')
+    if ~test:
+        print('Сохранение фалов модели')
         pickle.dump(cat_dict, open('cat_dict', 'wb'))
         pickle.dump(vocab, open('vocab', 'wb'))
         pickle.dump(tokenizer, open('tokenizer', 'wb'))
