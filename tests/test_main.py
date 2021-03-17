@@ -17,8 +17,8 @@ def df():
     return df_
 
 def test_main(df):
-    df['id'] = df.receipt_id
-    main(df)
+    # df['id'] = df.receipt_id
+    print(main(df))
 
 # Проверка функции загрузки данных
 def test_loading_data(df):

@@ -1,21 +1,17 @@
 import function as fn
-import script_function as sfn
-import pandas as pd
-from sklearn.model_selection import train_test_split
+from model import TextClassificationModel
 import pickle
-from scipy.sparse import csr_matrix
 from torchtext.data.utils import get_tokenizer
 from collections import Counter
 from torchtext.vocab import Vocab
 from torch.utils.data import DataLoader
 import torch
-from torch import nn
 import time
 
 
-def main(train, test = False):
+def main(path, test = False):
     # Загрузка данных
-    train_df, cat_dict = fn.loading_data(train)
+    train_df, cat_dict = fn.loading_data(path)
     train_data = train_df[['category_id_new', 'item_name']].to_numpy()
 
     tokenizer = get_tokenizer('basic_english')
@@ -44,23 +40,6 @@ def main(train, test = False):
 
     dataloader = DataLoader(train_data, batch_size=8, shuffle=False, collate_fn=collate_batch)
 
-    class TextClassificationModel(nn.Module):
-
-        def __init__(self, vocab_size, embed_dim, num_class):
-            super(TextClassificationModel, self).__init__()
-            self.embedding = nn.EmbeddingBag(vocab_size, embed_dim, sparse=True)
-            self.fc = nn.Linear(embed_dim, num_class)
-            self.init_weights()
-
-        def init_weights(self):
-            initrange = 0.5
-            self.embedding.weight.data.uniform_(-initrange, initrange)
-            self.fc.weight.data.uniform_(-initrange, initrange)
-            self.fc.bias.data.zero_()
-
-        def forward(self, text, offsets):
-            embedded = self.embedding(text, offsets)
-            return self.fc(embedded)
 
     num_class = len(cat_dict)
     vocab_size = len(vocab)
@@ -104,7 +83,7 @@ def main(train, test = False):
 
     from torch.utils.data.dataset import random_split
     # Hyperparameters
-    EPOCHS = 10  # epoch
+    EPOCHS = 25  # epoch
     LR = 5  # скорость обучения
     BATCH_SIZE = 16  # batch size for training
 
@@ -112,7 +91,6 @@ def main(train, test = False):
     optimizer = torch.optim.SGD(model.parameters(), lr=LR)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1.0, gamma=0.1)
     total_accu = None
-    # train_iter, test_iter = AG_NEWS()
     train_dataset = list(train_data)
     num_train = int(len(train_dataset) * 0.9)
     split_train_, split_valid_ = \
@@ -148,10 +126,12 @@ def main(train, test = False):
 
 
     # Сохранение моделей
-    # tfidf = cv
-    # if ~test:
-    #     pickle.dump(tfidf, open('tfidf', 'wb'))
-    #     pickle.dump(clf, open('clf_task1', 'wb'))
+    if test:
+        print('Режим тестирования')
+        pickle.dump(cat_dict, open('cat_dict', 'wb'))
+        pickle.dump(vocab, open('vocab', 'wb'))
+        pickle.dump(tokenizer, open('tokenizer', 'wb'))
+        torch.save(model.state_dict(), 'model')
 
 
 if __name__ == '__main__':

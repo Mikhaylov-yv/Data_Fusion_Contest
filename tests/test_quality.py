@@ -17,7 +17,7 @@ os.chdir('../')
 def test_script_quality():
     # Обучение
     start_time = time.time()
-    lern.main(pd.read_parquet('data/input/data_fusion_train.parquet'))
+    lern.main('data/input/data_fusion_train.parquet')
     lern_time = round((time.time() - start_time)/60, 2)
     # Тест качества обучения
     X_test = pickle.load(open('X_test', 'rb'))
