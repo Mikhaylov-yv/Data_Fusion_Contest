@@ -7,7 +7,7 @@ from model import TextClassificationModel
 def main(df, test = False):
     # Load model
     # tokenizer, model, cat_dict
-    cat_dict = pickle.load(open('cat_dict', 'rb'))
+    # cat_dict = pickle.load(open('cat_dict', 'rb'))
     # Edit data
     # df = sfn.data_preparation(df)
     # df = fn.add_ed_izm(df)
@@ -16,10 +16,11 @@ def main(df, test = False):
     pred = predict(df.item_name)
 
     # generation report
-    if ~test:
+    if test:
         df['pred'] = pred
         return df['pred']
     else:
+        print('Сохранение данных')
         res = pd.DataFrame(pred, columns=['pred'])
         res['id'] = df['id']
 
@@ -42,8 +43,10 @@ def predict(text_list):
         model.load_state_dict(torch.load('model', map_location=device))
         output = []
         for text in text_list:
-            text = torch.tensor(text_pipeline(text))
-            pred = model(text, torch.tensor([0])).argmax(1).item()
+            text_tensor = torch.tensor(text_pipeline(text))
+            # Если строка пустая
+            if ~len(text_tensor): text_tensor = torch.tensor([0])
+            pred = model(text_tensor, torch.tensor([0])).argmax(1).item()
             pred = dict(map(reversed, cat_dict.items()))[pred]
             output.append(pred)
         return output

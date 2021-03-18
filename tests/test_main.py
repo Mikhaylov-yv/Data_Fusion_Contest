@@ -4,6 +4,8 @@ import lern
 from main import main
 import pandas as pd
 import os
+from to_wrap_up import warp_data
+import zipfile
 pd.options.display.max_columns = None
 pd.options.display.expand_frame_repr = None
 
@@ -58,3 +60,9 @@ def test_get_cv(df):
 
 def test_lern_main():
     lern.main(path, test = True)
+
+def test_out_data():
+    warp_data('task1_test_for_user.parquet')
+    os.chdir('data/output/Model_to_send')
+    import script
+
