@@ -7,13 +7,20 @@ from torchtext.vocab import Vocab
 from torch.utils.data import DataLoader
 import torch
 import time
-
+import pandas as pd
+import numpy as np
 
 def main(path, test = False):
     # Загрузка данных
     train_df, cat_dict = fn.loading_data(path)
+    # Загрузка дополнительно размеченных данных
+    dop_df = pd.read_excel(r'C:\Users\Женечка\Desktop\Ручная разметка данных\Не размеченные данные.xlsx')[[
+        'category_id', 'item_name']].dropna().drop_duplicates()
+    dop_df['category_id_new'] = dop_df.category_id.map(cat_dict).astype(int)
+    dop_df = dop_df[['category_id_new', 'item_name']]
     train_df = train_df[train_df.category_id != -1].drop_duplicates(subset=['item_name', 'category_id'])
-    train_data = train_df[['category_id_new', 'item_name']].to_numpy()
+    train_data = np.vstack((train_df[['category_id_new', 'item_name']].to_numpy(),
+                            dop_df.to_numpy()))
 
     tokenizer = get_tokenizer('basic_english')
     counter = Counter()

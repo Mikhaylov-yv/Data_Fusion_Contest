@@ -65,4 +65,8 @@ def test_out_data():
     warp_data('task1_test_for_user.parquet')
     os.chdir('data/output/Model_to_send')
     import script
+    df_in = pd.read_parquet('data/task1_test_for_user.parquet')
+    df_in['pred'] = pd.read_csv('answers.csv')['pred']
+    print(df_in[['item_name', 'category_id', 'pred']])
+
 

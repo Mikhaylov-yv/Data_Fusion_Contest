@@ -45,7 +45,9 @@ def predict(text_list):
         for text in text_list:
             text_tensor = torch.tensor(text_pipeline(text))
             # Если строка пустая
-            if ~len(text_tensor): text_tensor = torch.tensor([0])
+            if len(text_tensor) == 0:
+                print('Нулевой')
+                text_tensor = torch.tensor([0])
             pred = model(text_tensor, torch.tensor([0])).argmax(1).item()
             pred = dict(map(reversed, cat_dict.items()))[pred]
             output.append(pred)
