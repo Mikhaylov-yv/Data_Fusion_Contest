@@ -1,18 +1,14 @@
 import pickle
 import pandas as pd
 import torch
+import function as fn
 from model import TextClassificationModel
 
 
 def main(df, test = False):
-    # Load model
-    # tokenizer, model, cat_dict
-    # cat_dict = pickle.load(open('cat_dict', 'rb'))
-    # Edit data
-    # df = sfn.data_preparation(df)
-    # df = fn.add_ed_izm(df)
+    df_in = df
+    df = fn.add_ed_izm(df)
     # Predict
-    # pred = df.item_name.apply(predict).map(dict(map(reversed, cat_dict.items())))
     pred = predict(df.item_name)
 
     # generation report
@@ -22,7 +18,7 @@ def main(df, test = False):
     else:
         print('Сохранение данных')
         res = pd.DataFrame(pred, columns=['pred'])
-        res['id'] = df['id']
+        res['id'] = df_in['id']
 
         res[['id', 'pred']].to_csv('answers.csv', index=None)
 
@@ -50,5 +46,5 @@ def predict(text_list):
                 text_tensor = torch.tensor([0])
             pred = model(text_tensor, torch.tensor([0])).argmax(1).item()
             pred = dict(map(reversed, cat_dict.items()))[pred]
-            output.append(pred)
+            output.append(int(pred))
         return output

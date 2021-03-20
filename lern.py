@@ -12,15 +12,29 @@ import numpy as np
 
 def main(path, test = False):
     # Загрузка данных
-    train_df, cat_dict = fn.loading_data(path)
+    cat_dict = {}
+    if test:
+        print('Режим тестирования')
+        cat_dict = pickle.load(open('cat_dict', 'rb'))
+        train_df = fn.loading_data(path, cat_dict)
+    else:
+        train_df, cat_dict = fn.loading_data(path, cat_dict)
     # Загрузка дополнительно размеченных данных
-    dop_df = pd.read_excel(r'C:\Users\Женечка\Desktop\Ручная разметка данных\Не размеченные данные.xlsx')[[
-        'category_id', 'item_name']].dropna().drop_duplicates()
-    dop_df['category_id_new'] = dop_df.category_id.map(cat_dict).astype(int)
-    dop_df = dop_df[['category_id_new', 'item_name']]
+    # dop_data_path = 'data/dop_data.parquet'
+    # pd.read_excel(r'C:\Users\Женечка\Desktop\Ручная разметка данных\Не размеченные данные.xlsx')[[
+    #     'category_id', 'item_name']].dropna().drop_duplicates().to_parquet(dop_data_path, index=False)
+    # dop_df = fn.loading_data(dop_data_path, cat_dict)
+    # Предварительныая обработка данных
+    train_df.item_name = fn.add_ed_izm(train_df[['item_name']]).item_name
+    # dop_df.item_name = fn.add_ed_izm(dop_df[['item_name']]).item_name
+    # print(list(train_df), list(dop_df))
+    # print(dop_df.category_id.map(cat_dict).dropna())
+    # dop_df['category_id_new'] = dop_df.category_id.map(cat_dict).astype(int)
+    # dop_df = dop_df[['category_id_new', 'item_name']]
     train_df = train_df[train_df.category_id != -1].drop_duplicates(subset=['item_name', 'category_id'])
-    train_data = np.vstack((train_df[['category_id_new', 'item_name']].to_numpy(),
-                            dop_df.to_numpy()))
+    # train_data = np.vstack((train_df[['category_id_new', 'item_name']].to_numpy(),
+    #                         dop_df.to_numpy()))
+    train_data = train_df[['category_id_new', 'item_name']].to_numpy()
 
     tokenizer = get_tokenizer('basic_english')
     counter = Counter()

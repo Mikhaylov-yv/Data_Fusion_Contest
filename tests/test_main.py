@@ -5,7 +5,7 @@ from main import main
 import pandas as pd
 import os
 from to_wrap_up import warp_data
-import zipfile
+import pickle
 pd.options.display.max_columns = None
 pd.options.display.expand_frame_repr = None
 
@@ -19,7 +19,7 @@ def df():
     return df_
 
 def test_main(df):
-    predict = main(df)
+    predict = main(df, True)
     df['predict'] = predict
     print(df)
 
@@ -53,10 +53,12 @@ def test_add_ed_izm():
     test_df['item_name_in'] = df.item_name
     print(test_df)
 
-def test_get_cv(df):
-    cv = fn.get_cv(df.item_name)
-    print(cv)
-    print(pd.Series(cv.vocabulary_).sort_values())
+def test_add_ed_izm_full_data():
+    data_path = 'data/input/data_fusion_train.parquet'
+    test_df = fn.loading_data(data_path, pickle.load(open('cat_dict', 'rb')))
+    test_df = test_df[test_df.category_id != -1].drop_duplicates(subset=['item_name', 'category_id'])
+    test_df['item_name_new'] = fn.add_ed_izm(test_df).item_name
+    print(test_df)
 
 def test_lern_main():
     lern.main(path, test = True)

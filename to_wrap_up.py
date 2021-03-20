@@ -9,6 +9,7 @@ def warp_data(data_name, path = 'Model_to_send'):
     pac_list = ['script.py',
                 'main.py',
                 'model.py',
+                'function.py',
                 'model',
                 'model_param',
                 'tokenizer',
